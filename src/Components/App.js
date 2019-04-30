@@ -14,29 +14,33 @@ class App extends Component {
     selectedShow: "",
     episodes: [],
     filterByRating: "",
+    page: 1
   }
 
-  componentDidMount = () => {
-    Adapter.getShows().then(shows => this.setState({shows}))
+  componentDidMount() {
+   Adapter.getShows().then(shows => this.setState({shows}))
+ }
+
+  componentDidUpdate() {
+    //window.scrollTo(0, 0)
   }
 
-  componentDidUpdate = () => {
-    window.scrollTo(0, 0)
-  }
-
-  handleSearch (e){
+  handleSearch = (e) => {
     this.setState({ searchTerm: e.target.value.toLowerCase() })
   }
 
   handleFilter = (e) => {
-    e.target.value === "No Filter" ? this.setState({ filterRating:"" }) : this.setState({ filterRating: e.target.value})
+    e.persist()
+    e.target.value === "No Filter" ? this.setState({ filterByRating: "" }) : this.setState({ filterByRating: e.target.value})
   }
 
-  selectShow = (show) => {
+  selectShow = (event) => {
+    event.persist()
+    let show = this.state.shows.find(s => s.id == event.target.id)
     Adapter.getShowEpisodes(show.id)
     .then((episodes) => this.setState({
       selectedShow: show,
-      episodes
+      episodes: episodes
     }))
   }
 
@@ -50,18 +54,30 @@ class App extends Component {
     }
   }
 
+  loadMore = () => {
+
+    Adapter.getShows(this.state.page).then(shows =>
+      this.setState({
+      shows: this.state.shows.concat(shows),
+      page: this.state.page + 1
+    })
+  )
+  }
+
   render (){
+    console.log(this.state)
     return (
       <div>
         <Nav handleFilter={this.handleFilter} handleSearch={this.handleSearch} searchTerm={this.state.searchTerm}/>
         <Grid celled>
           <Grid.Column width={5}>
-            {!!this.state.selectedShow ? <SelectedShowContainer selectedShow={this.state.selectedShow} allEpisodes={this.state.episodes}/> : <div/>}
+            {!!this.state.selectedShow ? <SelectedShowContainer selectedShow={this.state.selectedShow} episodes={this.state.episodes}/> : <div/>}
           </Grid.Column>
           <Grid.Column width={11}>
             <TVShowList shows={this.displayShows()} selectShow={this.selectShow} searchTerm={this.state.searchTerm}/>
           </Grid.Column>
         </Grid>
+        <button onClick={this.loadMore}>Load More Shows...</button>
       </div>
     );
   }
