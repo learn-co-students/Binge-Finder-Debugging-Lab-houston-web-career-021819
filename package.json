@@ -5,6 +5,8 @@
   "dependencies": {
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
+    "react-infinite-scroller": "^1.2.4",
+    "react-intersection-observer": "^8.23.0",
     "react-scripts": "1.1.4",
     "semantic-ui-css": "^2.3.3",
     "semantic-ui-react": "^0.82.0"
