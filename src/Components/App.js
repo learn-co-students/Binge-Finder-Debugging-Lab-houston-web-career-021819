@@ -3,7 +3,7 @@ import Adapter from '../Adapter';
 import TVShowList from './TVShowList';
 import Nav from './Nav';
 import SelectedShowContainer from './SelectedShowContainer';
-import { Grid } from 'semantic-ui-react';
+import { Grid, Container } from 'semantic-ui-react';
 
 
 
@@ -13,7 +13,7 @@ class App extends Component {
     searchTerm: "",
     selectedShow: "",
     episodes: [],
-    filterByRating: "",
+    filterByRating:[]
   }
 
   componentDidMount = () => {
@@ -24,12 +24,17 @@ class App extends Component {
     window.scrollTo(0, 0)
   }
 
-  handleSearch (e){
-    this.setState({ searchTerm: e.target.value.toLowerCase() })
+  handleSearch = (e) => {
+    let value = e.target.value
+    this.setState({ searchTerm: value })
   }
 
   handleFilter = (e) => {
-    e.target.value === "No Filter" ? this.setState({ filterRating:"" }) : this.setState({ filterRating: e.target.value})
+  
+    this.setState({
+      filterByRating: this.state.shows.filter(show => show.rating.average >= e.target.value)
+    })
+     
   }
 
   selectShow = (show) => {
@@ -41,16 +46,15 @@ class App extends Component {
   }
 
   displayShows = () => {
-    if (this.state.filterByRating){
-      return this.state.shows.filter((s)=> {
-        return s.rating.average >= this.state.filterByRating
-      })
-    } else {
-      return this.state.shows
+      if(this.state.searchTerm !== ""){
+        return this.state.shows.filter(show => show.name.toLowerCase() == this.state.searchTerm.toLowerCase())
+      }else{
+        return this.state.shows
     }
   }
 
   render (){
+    console.log(this.state.filterByRating.length)
     return (
       <div>
         <Nav handleFilter={this.handleFilter} handleSearch={this.handleSearch} searchTerm={this.state.searchTerm}/>
@@ -59,7 +63,10 @@ class App extends Component {
             {!!this.state.selectedShow ? <SelectedShowContainer selectedShow={this.state.selectedShow} allEpisodes={this.state.episodes}/> : <div/>}
           </Grid.Column>
           <Grid.Column width={11}>
-            <TVShowList shows={this.displayShows()} selectShow={this.selectShow} searchTerm={this.state.searchTerm}/>
+            {this.state.filterByRating.length > 0 ?
+              <TVShowList shows={this.state.filterByRating} selectShow={this.selectShow} /*searchTerm={this.state.searchTerm}*//>
+              :
+              <TVShowList shows={this.displayShows()} selectShow={this.selectShow} /*searchTerm={this.state.searchTerm}*//>}
           </Grid.Column>
         </Grid>
       </div>
@@ -68,3 +75,14 @@ class App extends Component {
 }
 
 export default App;
+/* 
+ App
+   -SelectedShowContainer
+     .Episode
+   -TVShowList
+     .TVShow 
+   -Nav 
+     .Search
+     .Filter
+   -Adapter
+*/   
