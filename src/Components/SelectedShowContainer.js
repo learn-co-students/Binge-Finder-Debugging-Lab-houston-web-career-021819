@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import Episode from './Components/Episode';
+import Episode from './Episode';
+import { Container } from 'semantic-ui-react';
 
 class SelectedShowContainer extends Component {
 
@@ -8,17 +9,17 @@ class SelectedShowContainer extends Component {
   }
 
   mapSeasons = () => {
-    if (!!this.props.episodes){
-      let seasons = this.props.episodes.map((e)=> e.season).unique()
-
+    if (!!this.props.allEpisodes){
+      let seasons = this.props.allEpisodes.map((e)=> e.season).unique()
       return seasons.map((s) => {
         return (<option value={s} key={s}>Season {s}</option>)
       });
     }
   }
 
+
   mapEpisodes = () => {
-    return this.props.episodes.map((e)=>{
+      return this.props.allEpisodes.map((e)=>{
       if (e.season == this.state.selectedSeason){
         return (<Episode eachEpisode={e} key={e.id}/>)
       }
@@ -31,7 +32,7 @@ class SelectedShowContainer extends Component {
 
 
   render() {
-    const { selectedShow } = this.props
+    const { selectedShow } = this.props // passed from this.props.selectedShow
 
     return (
       <div style={{position: "static"}}>
@@ -48,10 +49,10 @@ class SelectedShowContainer extends Component {
       </div>
     );
   }
-
+  
 }
 
-export SelectedShowContainer;
+export default SelectedShowContainer;
 
 
 Array.prototype.unique = function() {

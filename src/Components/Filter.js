@@ -4,7 +4,7 @@ const Filter = (props) => {
   return (
     <div>
     <h4> Filter By Rating </h4>
-    <select placeholder="Filter by average rating" onChange={props.handleFilter}>
+    <select placeholder="Filter by average rating" onChange={(e)=> props.handleFilter(e)}>
       <option>No Filter</option>
       <option value="1">1</option>
       <option value="2">2</option>
@@ -19,3 +19,4 @@ const Filter = (props) => {
     </div>
   )
 }
+export default Filter
